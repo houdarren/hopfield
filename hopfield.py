@@ -1,26 +1,37 @@
 # Hopfield Networks
 # Darren Hou
 
-# Converts a "letter" String into a list of 1s and 0s
 
 import math
 import random
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pyp
+
 
 def to_pattern(letter):
-    # from numpy import array
-    return np.array([+1 if c=='X' else 0 for c in letter.replace('\n','')])
+    """
+    Converts a "letter" String into a list of 1s and 0s
+    """
+    return np.array([1 if c=='X' else 0 for c in letter.replace('\n','')])
 
-# Displays a letter pattern in grid format
-# The "letter" should be of dimension n by n
+
 def display(pattern):
-    length = math.sqrt(pattern.size)
-    plt.imshow(pattern.reshape((length,length)), cmap=plt.cm.binary, interpolation='nearest')
-    plt.show()
+    """
+    Displays a letter pattern in grid format
 
-# Trains a list of patterns
+    The "letter" should be of dimension n by n
+    """
+    length = math.sqrt(pattern.size)
+    pyp.imshow(pattern.reshape((length,length)), cmap=pyp.cm.binary, interpolation='nearest')
+    pyp.show()
+
+
 def train(patterns):
+    """
+    Trains a list of patterns
+
+    Returns the weight matrix
+    """
     r,c = patterns.shape
     W = np.zeros((c,c))
     for p in patterns:
@@ -59,5 +70,5 @@ XXXXX
 XXXXX
 """
 
-distortion = distort(to_pattern(A), 10)
+distortion = distort(to_pattern(A), 5)
 display(distortion)
