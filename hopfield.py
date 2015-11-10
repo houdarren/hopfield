@@ -43,14 +43,32 @@ def train(patterns):
     return np.array(result)
 
 
-def recall(pattern, weights, steps=5):
+def recall(pattern, weights, pause):
     """
-    Given
+    Given a pattern, uses the weight matrix to fix any distortions
+
+    Returns a numpy array
     """
-    sgn = vectorize(lambda x: 0 if x<0 else +1)
-    for _ in xrange(steps):
-        patterns = sgn(dot(patterns,W))
-    return patterns
+    size = int(math.sqrt(pattern.size))
+    previous_pattern = np.array([0])
+    while not (np.array_equal(previous_pattern, pattern)):
+        for i in xrange(size):
+            sum = 0
+            for j in xrange(size):
+                print(str(i) + " " + str(j))
+                sum += pattern[j] * weights[j, i]
+            if sum >= 0:
+                pattern[i] = 1
+            else:
+                pattern[i] = 0
+        previous_pattern = np.array(pattern)
+    return pattern
+
+
+    # sgn = vectorize(lambda x: 0 if x<0 else +1)
+    # for _ in xrange(steps):
+    #     patterns = sgn(dot(patterns,W))
+    # return patterns
 
 def distort(pattern, distortions):
     """
@@ -88,4 +106,11 @@ XXXXX
 # display(distortion)
 
 training = train([to_pattern(A), to_pattern(Z)])
-print(training)
+
+pattern = to_pattern(A)
+distortion = distort(pattern, 5)
+
+result = recall(distortion, training, True)
+
+print(result)
+display(result)
