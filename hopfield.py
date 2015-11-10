@@ -10,19 +10,20 @@ import matplotlib.pyplot as pyp
 
 def to_pattern(letter):
     """
-    Converts a "letter" String into a list of 1s and 0s
+    Converts a "letter" String into a numpy array of 1s and 0s
     """
     return np.array([1 if c=='X' else 0 for c in letter.replace('\n','')])
 
 
 def display(pattern):
     """
+    Passes a numpy array
     Displays a letter pattern in grid format
 
     The "letter" should be of dimension n by n
     """
-    length = math.sqrt(pattern.size)
-    pyp.imshow(pattern.reshape((length,length)), cmap=pyp.cm.binary, interpolation='nearest')
+    n = math.sqrt(pattern.size) # side length of pattern
+    pyp.imshow(pattern.reshape((n,n)), cmap=pyp.cm.binary, interpolation='nearest')
     pyp.show()
 
 
@@ -30,18 +31,22 @@ def train(patterns):
     """
     Trains a list of patterns
 
-    Returns the weight matrix
+    Returns the weight matrix as a 2d list
     """
-    r,c = patterns.shape
-    W = np.zeros((c,c))
-    for p in patterns:
-        W = W + np.outer(p,p)
-    W[np.diag_indices(c)] = 0
-    return W/r
+    n = int(math.sqrt(patterns[1].size)) # side length
+    result = [[0 for x in range(n)] for x in range(n)] 
+    for pattern in patterns:
+        for i in xrange(n):
+            for j in xrange(n):
+                result[i][j] += (2 * pattern[i] - 1) * (2 * pattern[j] - 1)
+    return result
 
 def recall(W, patterns, steps=5):
-    sgn = vectorize(lambda x: -1 if x<0 else +1)
-    for _ in xrange(steps):        
+    """
+    Given
+    """
+    sgn = vectorize(lambda x: 0 if x<0 else +1)
+    for _ in xrange(steps):
         patterns = sgn(dot(patterns,W))
     return patterns
 
@@ -70,5 +75,9 @@ XXXXX
 XXXXX
 """
 
-distortion = distort(to_pattern(A), 5)
-display(distortion)
+# display(to_pattern(A))
+# distortion = distort(to_pattern(A), 5)
+# display(distortion)
+
+training = train([to_pattern(A), to_pattern(Z)])
+display(to_pattern(training))
