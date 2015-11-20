@@ -12,7 +12,8 @@ def to_pattern(letter):
     """
     Converts a "letter" String into a 1d numpy array of 1s and 0s
     """
-    return np.array([1 if c=='X' else 0 for c in letter.replace('\n','')])
+    return np.array([1 if c == 'X' else 0 for c in
+                    letter.replace('\n', '')])
 
 
 def display(pattern):
@@ -22,8 +23,9 @@ def display(pattern):
 
     The "letter" should be of dimension n by n
     """
-    n = math.sqrt(pattern.size) # side length of pattern
-    pyp.imshow(pattern.reshape((n,n)), cmap=pyp.cm.binary, interpolation='nearest')
+    n = math.sqrt(pattern.size)  # side length of pattern
+    pyp.imshow(pattern.reshape((n, n)),
+               cmap=pyp.cm.binary, interpolation='nearest')
     pyp.show()
 
 
@@ -33,8 +35,8 @@ def train(patterns):
 
     Returns the weight matrix as a 2d array
     """
-    n = int(math.sqrt(patterns[1].size)) # side length
-    result = [[0 for x in range(n)] for x in range(n)] 
+    n = patterns[1].size  # side length
+    result = [[0 for x in range(n)] for x in range(n)]
     for pattern in patterns:
         for i in xrange(n):
             for j in xrange(n):
@@ -49,32 +51,33 @@ def recall(pattern, weights, pause):
 
     Returns a numpy array
     """
-    size = int(math.sqrt(pattern.size))
+    size = pattern.size
     previous_pattern = np.array([0])
+    iterations = 0
     while not (np.array_equal(previous_pattern, pattern)):
+        print("iterations: " + str(iterations))
+        display(pattern)
         for i in xrange(size):
             sum = 0
             for j in xrange(size):
-                print(str(i) + " " + str(j))
+                # print(str(i) + " " + str(j)) # debug
                 sum += pattern[j] * weights[j, i]
             if sum >= 0:
                 pattern[i] = 1
             else:
                 pattern[i] = 0
+
         previous_pattern = np.array(pattern)
+        iterations += 1
+
     return pattern
 
-
-    # sgn = vectorize(lambda x: 0 if x<0 else +1)
-    # for _ in xrange(steps):
-    #     patterns = sgn(dot(patterns,W))
-    # return patterns
 
 def distort(pattern, distortions):
     """
     Passes a pattern array
     Changes a number of indicies within the given pattern
-    
+
     Returns the distorted pattern
     """
     distort_list = random.sample(range(pattern.size), distortions)
@@ -86,29 +89,58 @@ def distort(pattern, distortions):
     return pattern
 
 A = """
-.XXX.
-X...X
-XXXXX
-X...X
-X...X
+.XXX....
+X...X...
+XXXXX...
+X...X...
+........
+........
+........
 """
- 
+
+E = """
+XXXXXXXX
+X.......
+X.......
+XXXXXX..
+X.......
+X.......
+XXXXXXXX
+........
+"""
+
+equals = """
+........
+XXXXXXXX
+........
+XXXXXXXX
+........
+XXXXXXXX
+........
+........
+"""
+
 Z = """
-XXXXX
-...X.
-..X..
-.X...
-XXXXX
+XXXXX...
+...X....
+..X.....
+.X......
+XXXXX...
+........
+........
+XXXXX...
 """
+
 
 # display(to_pattern(A))
 # distortion = distort(to_pattern(A), 5)
 # display(distortion)
 
-training = train([to_pattern(A), to_pattern(Z)])
+training = train([to_pattern(A), to_pattern(E),
+                  to_pattern(equals), to_pattern(Z)])
 
 pattern = to_pattern(A)
-distortion = distort(pattern, 5)
+distortion = distort(pattern, 10)
 
 result = recall(distortion, training, True)
 
