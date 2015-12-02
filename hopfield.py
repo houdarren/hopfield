@@ -37,6 +37,7 @@ def train(patterns):
     """
     n = patterns[1].size  # side length
     result = [[0 for x in range(n)] for x in range(n)]
+    print("size" + str(n))
     for pattern in patterns:
         for i in xrange(n):
             for j in xrange(n):
@@ -53,8 +54,9 @@ def recall(pattern, weights, pause):
     """
     size = pattern.size
     previous_pattern = np.array([0])
+    previous_pattern2 = np.array([1])
     iterations = 0
-    while not (np.array_equal(previous_pattern, pattern)):
+    while not (np.array_equal(previous_pattern, previous_pattern2)):
         print("iterations: " + str(iterations))
         display(pattern)
         for i in xrange(size):
@@ -67,6 +69,7 @@ def recall(pattern, weights, pause):
             else:
                 pattern[i] = 0
 
+        previous_pattern2 = np.array(previous_pattern)
         previous_pattern = np.array(pattern)
         iterations += 1
 
@@ -75,27 +78,22 @@ def recall(pattern, weights, pause):
 
 def distort(pattern, distortions):
     """
-    Passes a pattern array
+    Passes a 1 x n pattern array
     Changes a number of indicies within the given pattern
 
-    Returns the distorted pattern
+    Returns the pattern distorted
     """
     distort_list = random.sample(range(pattern.size), distortions)
     for coordinate in distort_list:
-        if pattern[coordinate] == 1:
-            pattern[coordinate] = 0
-        else:
-            pattern[coordinate] = 1
+        pattern[coordinate] = 0 if 1 else 1
     return pattern
 
 A = """
-.XXX....
-X...X...
-XXXXX...
-X...X...
-........
-........
-........
+.XXX.
+X...X
+XXXXX
+X...X
+X...X
 """
 
 E = """
@@ -126,9 +124,9 @@ XXXXX...
 ..X.....
 .X......
 XXXXX...
-........
-........
-XXXXX...
+.......X
+......X.
+XXXXXX..
 """
 
 
@@ -136,13 +134,13 @@ XXXXX...
 # distortion = distort(to_pattern(A), 5)
 # display(distortion)
 
-training = train([to_pattern(A), to_pattern(E),
-                  to_pattern(equals), to_pattern(Z)])
+training = train([to_pattern(E), to_pattern(equals), to_pattern(Z)])
 
-pattern = to_pattern(A)
+pattern = to_pattern(E)
 distortion = distort(pattern, 10)
 
 result = recall(distortion, training, True)
 
 print(result)
 display(result)
+
