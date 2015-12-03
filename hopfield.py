@@ -37,7 +37,7 @@ def train(patterns):
     """
     n = patterns[1].size  # side length
     result = [[0 for x in range(n)] for x in range(n)]
-    print("size" + str(n))
+    print("size " + str(n)) # debug
     for pattern in patterns:
         for i in xrange(n):
             for j in xrange(n):
@@ -55,9 +55,8 @@ def recall(pattern, weights, pause):
     size = pattern.size
     previous_pattern = np.array([0])
     previous_pattern2 = np.array([1])
-    iterations = 0
+    iterations = 1
     while not (np.array_equal(previous_pattern, previous_pattern2)):
-        print("iterations: " + str(iterations))
         display(pattern)
         for i in xrange(size):
             sum = 0
@@ -72,7 +71,7 @@ def recall(pattern, weights, pause):
         previous_pattern2 = np.array(previous_pattern)
         previous_pattern = np.array(pattern)
         iterations += 1
-
+    print("iterations: " + str(iterations))
     return pattern
 
 
@@ -85,25 +84,52 @@ def distort(pattern, distortions):
     """
     distort_list = random.sample(range(pattern.size), distortions)
     for coordinate in distort_list:
-        pattern[coordinate] = 0 if 1 else 1
+        if pattern[coordinate] == 1:
+            pattern[coordinate] = 0
+        else:
+            pattern[coordinate] = 1
     return pattern
 
+
+def check(actual, expected):
+    """
+    TODO: fix check
+    """
+    for pattern in expected:
+        if np.array_equal(actual, expected):
+            print("actual equals expected")
+            return
+        reverse = np.array(expected)
+        for coordinate in reverse:
+            if coordinate == 1:
+                coordinate = 0
+            else:
+                coordinate = 1
+        if np.array_equal(actual, reverse):
+            print("actual equals reverse")
+            return
+    print("no result")
+
+
 A = """
-.XXX.
-X...X
-XXXXX
-X...X
-X...X
+...XX...
+..X..X..
+.X....X.
+X......X
+XXXXXXXX
+X......X
+X......X
+X......X
 """
 
 E = """
-XXXXXXXX
+XXXXXXX.
 X.......
 X.......
 XXXXXX..
 X.......
 X.......
-XXXXXXXX
+XXXXXXX.
 ........
 """
 
@@ -129,18 +155,14 @@ XXXXX...
 XXXXXX..
 """
 
+patterns = [to_pattern(A), to_pattern(E), to_pattern(equals), to_pattern(Z)]
 
-# display(to_pattern(A))
-# distortion = distort(to_pattern(A), 5)
-# display(distortion)
+training = train(patterns)
 
-training = train([to_pattern(E), to_pattern(equals), to_pattern(Z)])
-
-pattern = to_pattern(E)
-distortion = distort(pattern, 10)
+pattern = to_pattern(A)
+distortion = distort(pattern, 5)
 
 result = recall(distortion, training, True)
 
 print(result)
 display(result)
-
