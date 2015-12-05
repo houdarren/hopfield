@@ -11,6 +11,8 @@ import matplotlib.pyplot as pyp
 def to_pattern(letter):
     """
     Converts a "letter" String into a 1d numpy array of 1s and 0s
+
+    Returns a numpy array
     """
     return np.array([1 if c == 'X' else 0 for c in
                     letter.replace('\n', '')])
@@ -33,11 +35,11 @@ def train(patterns):
     """
     Trains a list of patterns
 
-    Returns the weight matrix as a 2d array
+    Returns the weight matrix as a 2d numpy array
     """
     n = patterns[1].size  # side length
     result = [[0 for x in range(n)] for x in range(n)]
-    print("size " + str(n)) # debug
+    print("size " + str(n))  # debug
     for pattern in patterns:
         for i in xrange(n):
             for j in xrange(n):
@@ -159,7 +161,7 @@ patterns = [to_pattern(A), to_pattern(E), to_pattern(equals), to_pattern(Z)]
 
 training = train(patterns)
 
-pattern = to_pattern(A)
+pattern = to_pattern(E)
 distortion = distort(pattern, 5)
 
 result = recall(distortion, training, True)
