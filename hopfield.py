@@ -14,7 +14,7 @@ def to_pattern(letter):
 
     Returns a numpy array
     """
-    return np.array([1 if c == 'X' else 0 for c in
+    return np.array([0 if c == 'X' else 1 for c in
                     letter.replace('\n', '')])
 
 
@@ -58,7 +58,14 @@ def recall(pattern, weights, pause):
     previous_pattern = np.array([0])
     previous_pattern2 = np.array([1])
     iterations = 1
+    energy = 0
+    for i in xrange(size):
+        for j in xrange(size):
+            energy += weights[i, j] * pattern[i] * pattern[j]
+    energy = -0.5 * energy
+    print(energy)
     while not (np.array_equal(previous_pattern, previous_pattern2)):
+        energy = 0
         display(pattern)
         for i in xrange(size):
             sum = 0
@@ -69,12 +76,20 @@ def recall(pattern, weights, pause):
                 pattern[i] = 1
             else:
                 pattern[i] = 0
-
+            for i in xrange(size):
+                for j in xrange(size):
+                    energy += weights[i, j] * pattern[i] * pattern[j]
+        energy = -0.5 * energy
+        print(energy)
         previous_pattern2 = np.array(previous_pattern)
         previous_pattern = np.array(pattern)
         iterations += 1
     print("iterations: " + str(iterations))
     return pattern
+
+
+def calculate_energy(pattern):
+    size = 
 
 
 def distort(pattern, distortions):
@@ -147,22 +162,22 @@ XXXXXXXX
 """
 
 Z = """
-XXXXX...
+XXXXXXXX
+......X.
+.....X..
+....X...
 ...X....
 ..X.....
 .X......
-XXXXX...
-.......X
-......X.
-XXXXXX..
+XXXXXXXX
 """
 
 patterns = [to_pattern(A), to_pattern(E), to_pattern(equals), to_pattern(Z)]
 
 training = train(patterns)
 
-pattern = to_pattern(E)
-distortion = distort(pattern, 5)
+pattern = to_pattern(equals)
+distortion = distort(pattern, 60)
 
 result = recall(distortion, training, True)
 
