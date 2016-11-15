@@ -1,5 +1,0 @@
-Hopfield
-
-Tests
-Recognition
-Example
